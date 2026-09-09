@@ -31,7 +31,10 @@
 html{scroll-behavior:smooth;}
 body{
   margin:0;
-  background:var(--bg);
+  background-color:var(--bg);
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22320%22%20height%3D%22320%22%20viewBox%3D%220%200%20320%20320%22%3E%0A%3Cg%20stroke%3D%22%23E1F0E7%22%20stroke-width%3D%222.5%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%0A%20%20%3Cg%20transform%3D%22translate%2846%2C58%29%22%3E%0A%20%20%20%20%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%228%22/%3E%0A%20%20%20%20%3Cline%20x1%3D%220%22%20y1%3D%228%22%20x2%3D%220%22%20y2%3D%2224%22/%3E%0A%20%20%20%20%3Cline%20x1%3D%220%22%20y1%3D%2216%22%20x2%3D%227%22%20y2%3D%2216%22/%3E%0A%20%20%20%20%3Cline%20x1%3D%220%22%20y1%3D%2224%22%20x2%3D%226%22%20y2%3D%2224%22/%3E%0A%20%20%3C/g%3E%0A%20%20%3Cg%20transform%3D%22translate%28245%2C150%29%20rotate%28-10%29%22%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22-13%22%20cy%3D%229%22%20r%3D%2211%22/%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2213%22%20cy%3D%229%22%20r%3D%2211%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M-13%2C9%20L0%2C-7%20L13%2C9%20M0%2C-7%20L-5%2C-12%20M-13%2C9%20L5%2C-2%22/%3E%0A%20%20%3C/g%3E%0A%20%20%3Cg%20transform%3D%22translate%2890%2C255%29%20rotate%286%29%22%3E%0A%20%20%20%20%3Crect%20x%3D%22-14%22%20y%3D%22-11%22%20width%3D%2228%22%20height%3D%2218%22%20rx%3D%222%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M-18%2C7%20L18%2C7%20L21%2C12%20L-21%2C12%20Z%22/%3E%0A%20%20%3C/g%3E%0A%3C/g%3E%0A%3C/svg%3E");
+  background-repeat:repeat;
+  background-size:320px 320px;
   color:var(--ink);
   font-family:'Manrope', system-ui, sans-serif;
   font-size:16px;
@@ -255,6 +258,85 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
 }
 .manual-code-form input:focus{outline:2px solid var(--green); outline-offset:1px;}
 
+/* Product picker (nyckelring vs klistermärke) */
+.picker-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin:28px 0;}
+.picker-card{
+  background:var(--bg-raised); border:2px solid var(--line);
+  border-radius:var(--radius-tag); padding:0; overflow:hidden; cursor:pointer;
+  text-align:left; font-family:inherit; display:flex; flex-direction:column;
+  transition:border-color .15s ease, transform .15s ease;
+}
+.picker-card:hover{border-color:var(--green); transform:translateY(-2px);}
+.picker-card.selected{border-color:var(--green); background:#fff; box-shadow:0 8px 24px rgba(18,63,43,0.12);}
+.picker-card .picker-visual{
+  aspect-ratio:4/3; display:flex; align-items:center; justify-content:center;
+  background:var(--ink); color:#fff;
+}
+.picker-card .picker-visual svg{width:56%; height:56%;}
+.picker-card .picker-body{padding:16px 18px;}
+.picker-card h3{margin-bottom:4px;}
+.picker-card p{margin:0; font-size:0.9rem;}
+
+.product-panel{
+  background:var(--bg-raised); border:1px solid var(--line);
+  border-radius:var(--radius-tag); padding:26px; margin-top:8px;
+}
+.product-panel .price-tag{
+  font-family:'Fraunces', serif; font-size:1.6rem; font-weight:600; color:var(--green-dark);
+  margin-bottom:6px;
+}
+.qty-row{display:flex; align-items:center; gap:14px; margin:16px 0;}
+.qty-row button{
+  width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:#fff;
+  font-size:1.1rem; font-weight:700; cursor:pointer; color:var(--ink);
+}
+.qty-row button:hover{border-color:var(--green); color:var(--green);}
+.qty-row span{min-width:24px; text-align:center; font-weight:700;}
+
+.file-drop{
+  border:2px dashed var(--line); border-radius:12px; padding:18px; text-align:center;
+  background:#fff; margin:14px 0;
+}
+.file-drop input[type="file"]{display:block; margin:10px auto 0; font-size:0.85rem;}
+.file-drop .file-name{font-size:0.85rem; color:var(--green-dark); font-weight:600; margin-top:8px;}
+
+/* Cart */
+.cart-box{
+  background:var(--ink); color:#fff; border-radius:var(--radius-tag);
+  padding:24px; margin:32px 0;
+}
+.cart-box h3{color:#fff;}
+.cart-empty{color:#B9C2BD; font-size:0.9rem;}
+.cart-line{
+  display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
+  padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.12);
+}
+.cart-line:last-of-type{border-bottom:none;}
+.cart-line .cart-line-title{font-weight:700;}
+.cart-line .cart-line-meta{font-size:0.82rem; color:#B9C2BD; margin-top:2px;}
+.cart-line button{
+  background:none; border:none; color:#E2708C; font-weight:700; cursor:pointer; font-size:0.85rem;
+  padding:4px 8px;
+}
+.cart-total{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-top:16px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.18);
+  font-family:'Fraunces', serif; font-size:1.3rem; font-weight:600;
+}
+
+/* Confirmation / thank you */
+.confirm-panel{
+  text-align:center; padding:56px 24px; background:var(--green); color:#fff;
+  border-radius:var(--radius-tag);
+}
+.confirm-panel .check{
+  width:56px; height:56px; border-radius:50%; background:#fff; color:var(--green);
+  display:flex; align-items:center; justify-content:center; margin:0 auto 18px;
+  font-size:1.6rem; font-weight:700;
+}
+.confirm-panel h2{color:#fff; font-size:clamp(1.8rem, 4vw, 2.6rem);}
+.confirm-panel p{color:#E7F3ED; margin:0 auto;}
+
 /* Responsive */
 @media (max-width: 860px){
   .hero .wrap{grid-template-columns:1fr;}
@@ -263,6 +345,7 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
   .product-grid{grid-template-columns:1fr;}
   nav.site{gap:16px;}
   .field-row{grid-template-columns:1fr;}
+  .picker-grid{grid-template-columns:1fr;}
 }
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto;}
@@ -323,6 +406,11 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
           <label for="description">Beskrivning (valfritt)</label>
           <textarea id="description" name="description" rows="3" placeholder="Färg, märke eller annat som hjälper hittaren känna igen den"></textarea>
         </div>
+        <div class="field">
+          <label for="owner-contact">Ditt namn (syns bara för oss)</label>
+          <input id="owner-contact" name="owner_contact" type="text" placeholder="Ditt namn">
+          <p class="hint">Visas aldrig för den som hittar din sak — bara vi på ReuniteUF ser det, om du kontaktar oss om ett problem.</p>
+        </div>
         <button type="submit" class="btn btn-gold btn-block" id="register-btn">Registrera bricka</button>
         <div id="register-msg" class="form-msg" role="status"></div>
       </form>
@@ -353,6 +441,10 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
         <div class="chat-log" id="chat-log">
           <p class="chat-empty">Inga meddelanden ännu — säg hej!</p>
         </div>
+        <p id="chat-expired-notice" class="hint" style="display:none; padding:10px 16px 0;">
+          Den här chatten stängde 24 timmar efter första meddelandet och tar inte längre emot nya meddelanden.
+          Har ni redan bestämt en plats att mötas, hör av er direkt istället.
+        </p>
         <form class="chat-input" id="chat-form">
           <input id="chat-text" type="text" placeholder="Skriv ett meddelande…" autocomplete="off" required>
           <button type="submit" class="btn btn-primary">Skicka</button>
@@ -365,7 +457,7 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
 
 <footer class="site">
   <div class="wrap">
-    <span>ReuniteUF</span>
+    <span>ReuniteUF — UF-företag</span>
     <a href="index.html" class="muted">Till startsidan</a>
   </div>
 </footer>
@@ -381,7 +473,7 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const params = new URLSearchParams(location.search);
-  const itemId = params.get("id");
+  const shortCode = (params.get("c") || "").toUpperCase();
   const ownerKey = params.get("key");
 
   const views = {
@@ -397,7 +489,7 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
     view.style.display = "block";
   }
 
-  if (!itemId) {
+  if (!shortCode) {
     show(views.noId);
     setupManualCodeForm();
   } else {
@@ -415,22 +507,23 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
       if (!raw) return;
 
       let code = raw;
-      // Om personen klistrat in en hel länk, plocka ut ?id=... ur den
+      // Om personen klistrat in en hel länk, plocka ut ?c=... ur den
       try {
         const url = new URL(raw);
-        const idFromUrl = url.searchParams.get("id");
-        if (idFromUrl) code = idFromUrl;
+        const codeFromUrl = url.searchParams.get("c");
+        if (codeFromUrl) code = codeFromUrl;
       } catch {
         // inte en giltig URL, då är "raw" antagligen bara koden i sig
       }
 
-      const uuidPattern = /^[0-9a-f-]{20,}$/i;
-      if (!uuidPattern.test(code)) {
+      code = code.trim().toUpperCase();
+      const codePattern = /^[A-Z0-9]{4,10}$/;
+      if (!codePattern.test(code)) {
         msg.textContent = "Det där ser inte ut som en giltig kod. Kontrollera och testa igen.";
         return;
       }
 
-      location.href = `${location.pathname}?id=${code}`;
+      location.href = `${location.pathname}?c=${code}`;
     });
   }
 
@@ -439,7 +532,7 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
     const { data: item, error } = await supabase
       .from("items")
       .select("*")
-      .eq("id", itemId)
+      .eq("short_code", shortCode)
       .maybeSingle();
 
     if (error || !item) {
@@ -472,9 +565,10 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
         .update({
           title: data.title,
           description: data.description || null,
+          owner_contact: data.owner_contact || null,
           status: "active",
         })
-        .eq("id", itemId)
+        .eq("short_code", shortCode)
         .select()
         .single();
 
@@ -487,7 +581,7 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
         return;
       }
 
-      const link = `${location.origin}${location.pathname}?id=${itemId}&key=${updated.owner_key}`;
+      const link = `${location.origin}${location.pathname}?c=${shortCode}&key=${updated.owner_key}`;
       const box = document.getElementById("owner-link-box");
       box.textContent = link;
 
@@ -511,6 +605,24 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
 
     const myRole = isOwner ? "agare" : "hittare";
     const log = document.getElementById("chat-log");
+    const CHAT_LIFETIME_MS = 24 * 60 * 60 * 1000; // 24 timmar
+    let chatIsExpired = false;
+
+    function applyExpiryState(messages) {
+      if (!messages.length) return;
+      const firstMessageTime = new Date(messages[0].created_at).getTime();
+      chatIsExpired = (Date.now() - firstMessageTime) > CHAT_LIFETIME_MS;
+
+      const form = document.getElementById("chat-form");
+      const notice = document.getElementById("chat-expired-notice");
+      const input = document.getElementById("chat-text");
+      const submitBtn = form.querySelector("button");
+
+      notice.style.display = chatIsExpired ? "block" : "none";
+      input.disabled = chatIsExpired;
+      submitBtn.disabled = chatIsExpired;
+      input.placeholder = chatIsExpired ? "Chatten är stängd" : "Skriv ett meddelande…";
+    }
 
     async function loadMessages() {
       const { data: messages, error } = await supabase
@@ -524,6 +636,7 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
         return;
       }
       renderMessages(messages);
+      applyExpiryState(messages);
     }
 
     function renderMessages(messages) {
@@ -565,6 +678,7 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
     const chatText = document.getElementById("chat-text");
     chatForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      if (chatIsExpired) return;
       const content = chatText.value.trim();
       if (!content) return;
       chatText.value = "";
