@@ -405,7 +405,7 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
 
 <footer class="site">
   <div class="wrap">
-    <span>ReuniteUF</span>
+    <span>ReuniteUF — UF-företag</span>
     <a href="index.html" class="muted">Till startsidan</a>
   </div>
 </footer>
@@ -414,12 +414,12 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
   import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
   // --- FYLL I ERA EGNA VÄRDEN HÄR (Supabase -> Project Settings -> API) ---
-  const SUPABASE_URL = "https://ssvmvnhxxgfjoapwajzb.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzdm12bmh4eGdmam9hcHdhanpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjc2MDUsImV4cCI6MjEwMzk0MzYwNX0.BzLIWOlPWMJiIAwgsGBPHp53miFamZW8klzKxjonJ9c";
+  const SUPABASE_URL = "https://DITT-PROJEKT.supabase.co";
+  const SUPABASE_ANON_KEY = "DIN-ANON-KEY";
   // -------------------------------------------------------------------
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const ADMIN_PASSWORD = "OliviaxxEmilia"; // <-- byt till ert eget lösenord
+  const ADMIN_PASSWORD = "byt-mig"; // <-- byt till ert eget lösenord
 
   document.getElementById("unlock-btn").addEventListener("click", () => {
     const pw = document.getElementById("pw").value;
@@ -441,19 +441,18 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
     const label = labelInput.value.trim() || null;
 
     let data, error;
-    // Försök skapa en unik kort kod, gör om ett par gånger ifall den redan är upptagen
-    for (let attempt = 0; attempt < 5; attempt++) {
-      const shortCode = makeShortCode();
-      const result = await supabase
-        .from("items")
-        .insert({ status: "unregistered", short_code: shortCode, label })
-        .select()
-        .single();
-      data = result.data;
-      error = result.error;
-      if (!error) break;
-      if (error.code !== "23505") break; // inte ett "redan upptagen"-fel, sluta försöka
-    }
+       // Skapa en lång, unik och ogissbar kod (24 tecken)
+    const longCode = makeLongCode();
+    
+    // Vi skickar nu koden till din original-kolumn (t.ex. 'id') istället för 'short_code'
+    const result = await supabase
+      .from("items")
+      .insert({ status: "unregistered", id: longCode, label }) // Ändrat till 'id' här
+      .select()
+      .single();
+      
+    data = result.data;
+    error = result.error;
 
     btn.disabled = false;
     btn.textContent = "+ Skapa ny bricka";
@@ -466,13 +465,18 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
 
     labelInput.value = "";
 
-    renderNewTag(data.short_code);
+    // Använd databasens sparade id för att rita ut QR-koden
+    renderNewTag(data.id); 
     loadUnregistered();
   });
 
-  function makeShortCode(length = 6) {
-    // Läsbart alfabet utan lätt förväxlade tecken (0/O, 1/I/L)
-    const alphabet = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  // Ny funktion som genererar en lång, kryptografiskt säker sträng
+  function makeLongCode() {
+    // Om du hellre vill ha ett standard UUID (t.ex. "123e4567-e89b-12d3-a456-426614174000")
+    // kan du bara returnera: crypto.randomUUID();
+    
+    const length = 24; // Ändrat från 6 till 24 tecken för att göra den helt ogissbar
+    const alphabet = "ABCDEFGHJKMNPQRSTUVWXYZ23456789abcdefghjkmnpqrstuvwxyz";
     const bytes = new Uint8Array(length);
     crypto.getRandomValues(bytes);
     let code = "";
