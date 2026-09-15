@@ -28,9 +28,10 @@
 }
 
 *{box-sizing:border-box;}
-html{scroll-behavior:smooth;}
+html{scroll-behavior:smooth; overflow-x:hidden;}
 body{
   margin:0;
+  overflow-x:hidden;
   background-color:var(--bg);
   background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22320%22%20height%3D%22320%22%20viewBox%3D%220%200%20320%20320%22%3E%0A%3Cg%20stroke%3D%22%23E1F0E7%22%20stroke-width%3D%222.5%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%0A%20%20%3Cg%20transform%3D%22translate%2846%2C58%29%22%3E%0A%20%20%20%20%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%228%22/%3E%0A%20%20%20%20%3Cline%20x1%3D%220%22%20y1%3D%228%22%20x2%3D%220%22%20y2%3D%2224%22/%3E%0A%20%20%20%20%3Cline%20x1%3D%220%22%20y1%3D%2216%22%20x2%3D%227%22%20y2%3D%2216%22/%3E%0A%20%20%20%20%3Cline%20x1%3D%220%22%20y1%3D%2224%22%20x2%3D%226%22%20y2%3D%2224%22/%3E%0A%20%20%3C/g%3E%0A%20%20%3Cg%20transform%3D%22translate%28245%2C150%29%20rotate%28-10%29%22%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22-13%22%20cy%3D%229%22%20r%3D%2211%22/%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2213%22%20cy%3D%229%22%20r%3D%2211%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M-13%2C9%20L0%2C-7%20L13%2C9%20M0%2C-7%20L-5%2C-12%20M-13%2C9%20L5%2C-2%22/%3E%0A%20%20%3C/g%3E%0A%20%20%3Cg%20transform%3D%22translate%2890%2C255%29%20rotate%286%29%22%3E%0A%20%20%20%20%3Crect%20x%3D%22-14%22%20y%3D%22-11%22%20width%3D%2228%22%20height%3D%2218%22%20rx%3D%222%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M-18%2C7%20L18%2C7%20L21%2C12%20L-21%2C12%20Z%22/%3E%0A%20%20%3C/g%3E%0A%3C/g%3E%0A%3C/svg%3E");
   background-repeat:repeat;
@@ -49,7 +50,7 @@ h1,h2,h3,.display{
   margin:0 0 0.4em 0;
   letter-spacing:-0.01em;
 }
-h1{font-size:clamp(2.1rem, 4.5vw, 3.4rem);}
+h1{font-size:clamp(1.6rem, 4.5vw, 3.4rem); overflow-wrap:break-word; word-break:break-word;}
 h2{font-size:clamp(1.5rem, 3vw, 2.1rem);}
 h3{font-size:1.2rem;}
 p{margin:0 0 1em 0; color:var(--ink-soft); max-width:62ch;}
@@ -64,27 +65,29 @@ a{color:inherit;}
 /* ---------- Header ---------- */
 header.site{
   padding:20px 0;
-  border-bottom:1px solid var(--line);
+  background:var(--green);
+  border-bottom:1px solid rgba(255,255,255,0.25);
 }
 header.site .wrap{
   display:flex; align-items:center; justify-content:space-between; gap:16px;
+  flex-wrap:wrap; row-gap:10px;
 }
 .brand{
   display:flex; align-items:center; gap:10px;
   font-family:'Fraunces', serif; font-weight:600; font-size:1.25rem;
-  text-decoration:none; color:var(--ink);
+  text-decoration:none; color:#fff;
 }
-.brand .logo-icon{color:var(--green);}
-nav.site{display:flex; gap:28px; align-items:center;}
+.brand .logo-icon{color:#fff;}
+nav.site{display:flex; gap:28px; align-items:center; flex-wrap:wrap; row-gap:8px;}
 nav.site a{
-  text-decoration:none; color:var(--ink-soft); font-weight:600; font-size:0.95rem;
+  text-decoration:none; color:#fff; font-weight:600; font-size:0.95rem;
 }
-nav.site a:hover{color:var(--ink);}
+nav.site a:hover{text-decoration:underline;}
 nav.site a.cta{
-  color:#fff; background:var(--green); padding:10px 18px;
+  color:#fff; background:var(--ink); padding:10px 18px;
   border-radius:999px;
 }
-nav.site a.cta:hover{background:var(--green-dark);}
+nav.site a.cta:hover{background:#000;}
 
 /* ---------- Buttons ---------- */
 .btn{
@@ -149,13 +152,15 @@ nav.site a.cta:hover{background:var(--green-dark);}
 
 /* ---------- Sections ---------- */
 section{padding:64px 0;}
-section.alt{background:var(--bg-raised); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+section.alt{background:var(--green); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+section.alt .section-head h2{color:#fff;}
+section.alt .section-head p{color:#DDEFE5;}
 .section-head{max-width:640px; margin-bottom:40px;}
 
 /* Steps */
 .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
 .step{
-  background:var(--bg-raised); border:1px solid var(--line);
+  background:#fff; border:1px solid var(--line);
   border-radius:var(--radius-tag) var(--radius-tag) var(--radius-tag) 6px;
   padding:26px 22px;
 }
@@ -337,6 +342,19 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
 .confirm-panel h2{color:#fff; font-size:clamp(1.8rem, 4vw, 2.6rem);}
 .confirm-panel p{color:#E7F3ED; margin:0 auto;}
 
+/* Om oss */
+.about-section{padding:64px 0;}
+.about-card{
+  background:var(--bg-raised); border:1px solid var(--line);
+  border-radius:var(--radius-tag); padding:40px; display:grid; grid-template-columns:auto 1fr; gap:28px; align-items:center;
+}
+.about-card .about-emoji{
+  width:72px; height:72px; border-radius:50%; background:var(--green); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:2rem; flex:none;
+}
+.about-card h2{margin-bottom:10px;}
+.about-card p{margin:0;}
+
 /* Responsive */
 @media (max-width: 860px){
   .hero .wrap{grid-template-columns:1fr;}
@@ -346,6 +364,8 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
   nav.site{gap:16px;}
   .field-row{grid-template-columns:1fr;}
   .picker-grid{grid-template-columns:1fr;}
+  .about-card{grid-template-columns:1fr; text-align:center; padding:28px;}
+  .about-card .about-emoji{margin:0 auto;}
 }
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto;}
@@ -414,12 +434,12 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
   import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
   // --- FYLL I ERA EGNA VÄRDEN HÄR (Supabase -> Project Settings -> API) ---
-  const SUPABASE_URL = "https://ssvmvnhxxgfjoapwajzb.supabase.co/";
+  const SUPABASE_URL = "https://ssvmvnhxxgfjoapwajzb.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzdm12bmh4eGdmam9hcHdhanpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjc2MDUsImV4cCI6MjEwMzk0MzYwNX0.BzLIWOlPWMJiIAwgsGBPHp53miFamZW8klzKxjonJ9c";
   // -------------------------------------------------------------------
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const ADMIN_PASSWORD = "OliviaxxEmilia"; // <-- byt till ert eget lösenord
+  const ADMIN_PASSWORD = "byt-mig"; // <-- byt till ert eget lösenord
 
   document.getElementById("unlock-btn").addEventListener("click", () => {
     const pw = document.getElementById("pw").value;
@@ -440,19 +460,11 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
     const labelInput = document.getElementById("new-label");
     const label = labelInput.value.trim() || null;
 
-    let data, error;
-       // Skapa en lång, unik och ogissbar kod (24 tecken)
-    const longCode = makeLongCode();
-    
-    // Vi skickar nu koden till din original-kolumn (t.ex. 'id') istället för 'short_code'
-    const result = await supabase
+    const { data, error } = await supabase
       .from("items")
-      .insert({ status: "unregistered", id: longCode, label }) // Ändrat till 'id' här
+      .insert({ status: "unregistered", label })
       .select()
       .single();
-      
-    data = result.data;
-    error = result.error;
 
     btn.disabled = false;
     btn.textContent = "+ Skapa ny bricka";
@@ -465,33 +477,22 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
 
     labelInput.value = "";
 
-    // Använd databasens sparade id för att rita ut QR-koden
-    renderNewTag(data.id); 
+    renderNewTag(data.id);
     loadUnregistered();
   });
 
-  // Ny funktion som genererar en lång, kryptografiskt säker sträng
-  function makeLongCode() {
-    // Om du hellre vill ha ett standard UUID (t.ex. "123e4567-e89b-12d3-a456-426614174000")
-    // kan du bara returnera: crypto.randomUUID();
-    
-    const length = 24; // Ändrat från 6 till 24 tecken för att göra den helt ogissbar
-    const alphabet = "ABCDEFGHJKMNPQRSTUVWXYZ23456789abcdefghjkmnpqrstuvwxyz";
-    const bytes = new Uint8Array(length);
-    crypto.getRandomValues(bytes);
-    let code = "";
-    for (let i = 0; i < length; i++) {
-      code += alphabet[bytes[i] % alphabet.length];
-    }
-    return code;
+  // VIKTIGT: denna länk är hårdkodad med flit så att QR-koder alltid pekar
+  // på er permanenta, gratis GitHub Pages-adress — även om ni surfar via
+  // en köpt domän (t.ex. Loopia) när ni skapar brickan. Byter/avslutar ni
+  // domänen senare slutar redan tryckta QR-koder ALDRIG fungera.
+  const PERMANENT_BASE_URL = "https://reuniteuf.github.io/Reunite-UF";
+
+  function tagUrl(id) {
+    return `${PERMANENT_BASE_URL}/hitta.html?id=${id}`;
   }
 
-  function tagUrl(code) {
-    return `${location.origin}${location.pathname.replace("admin.html", "hitta.html")}?c=${code}`;
-  }
-
-  function renderNewTag(code) {
-    const url = tagUrl(code);
+  function renderNewTag(id) {
+    const url = tagUrl(id);
     const wrap = document.getElementById("new-tag-result");
     wrap.innerHTML = `
       <div class="card">
@@ -514,7 +515,7 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
   async function loadUnregistered() {
     const { data, error } = await supabase
       .from("items")
-      .select("short_code, label, created_at")
+      .select("id, label, created_at")
       .eq("status", "unregistered")
       .order("created_at", { ascending: false });
 
@@ -528,7 +529,7 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
       return;
     }
     list.innerHTML = data.map(item => `
-      <div class="copy-box">${item.label ? `<strong>${item.label}</strong> — ` : ""}${tagUrl(item.short_code)}</div>
+      <div class="copy-box">${item.label ? `<strong>${item.label}</strong> — ` : ""}${tagUrl(item.id)}</div>
     `).join("");
   }
 </script>
