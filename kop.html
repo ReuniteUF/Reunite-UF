@@ -512,18 +512,32 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
     };
     const swishUrl = "swish://payment?data=" + encodeURIComponent(JSON.stringify(swishData));
 
-    // Visa alltid en QR-kod ~ praktiskt för datoranvändare, och ett bra
-    // reservalternativ på mobil om appen av någon anledning inte öppnas.
-    const qrBox = document.getElementById("swish-qr-box");
-    qrBox.style.display = "block";
-    document.getElementById("swish-qr-amount").textContent = `Belopp: ${total} kr`;
-    QRCode.toCanvas(document.getElementById("swish-qr-canvas"), swishUrl, { width: 220, margin: 1 }, (err) => {
-      if (err) console.error(err);
-    });
+    // Ordern lyckades ~ visa bekräftelsen direkt, oavsett vad som händer med QR-koden nedan
     btn.textContent = "Betala med Swish";
     btn.disabled = false;
     msg.textContent = "Order sparad! Slutför betalningen i Swish.";
     msg.classList.add("ok");
+
+    const qrBox = document.getElementById("swish-qr-box");
+    qrBox.style.display = "block";
+    document.getElementById("swish-qr-amount").textContent = `Belopp: ${total} kr`;
+
+    try {
+      if (typeof QRCode === "undefined") throw new Error("QR-biblioteket laddades inte");
+      QRCode.toCanvas(document.getElementById("swish-qr-canvas"), swishUrl, { width: 220, margin: 1 }, (err) => {
+        if (err) showSwishLinkFallback(swishUrl);
+      });
+    } catch (qrErr) {
+      console.error(qrErr);
+      showSwishLinkFallback(swishUrl);
+    }
+
+    function showSwishLinkFallback(url) {
+      document.getElementById("swish-qr-canvas").style.display = "none";
+      const fallback = document.createElement("p");
+      fallback.innerHTML = `QR-koden kunde inte visas. <a href="${url}">Klicka här för att öppna Swish</a> på mobilen, eller swisha manuellt till vårt nummer.`;
+      document.getElementById("swish-qr-canvas").insertAdjacentElement("afterend", fallback);
+    }
 
     // På mobil kan vi dessutom försöka öppna appen direkt
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
