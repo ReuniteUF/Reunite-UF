@@ -243,7 +243,6 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
 }
 
 </style>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -334,9 +333,12 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
       </form>
 
       <div id="swish-qr-box" class="card center" style="display:none; margin-top:16px;">
-        <h3>Skanna för att betala</h3>
-        <p>Öppnade inte Swish-appen automatiskt (t.ex. för att du sitter vid en dator)? Skanna koden nedan med Swish-appen i mobilen.</p>
-        <div class="qr-preview"><canvas id="swish-qr-canvas"></canvas></div>
+        <h3>Betala med Swish</h3>
+        <p>Öppnade inte Swish-appen automatisk, Swisha manuellt till numret nedan.</p>
+        <div class="qr-preview" id="swish-qr-slot">
+          <img src="bilder/Swish-qr.png" alt="Swish QR-kod" style="width:220px; height:auto;" onerror="this.style.display='none'; document.getElementById('swish-qr-fallback').style.display='block';">
+          <p class="muted" id="swish-qr-fallback" style="margin:0; display:none;">Swish-nummer: <strong id="swish-qr-number"></strong></p>
+        </div>
         <p class="muted" id="swish-qr-amount" style="margin-top:14px;"></p>
       </div>
     </div>
@@ -512,7 +514,7 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
     };
     const swishUrl = "swish://payment?data=" + encodeURIComponent(JSON.stringify(swishData));
 
-    // Ordern lyckades ~ visa bekräftelsen direkt, oavsett vad som händer med QR-koden nedan
+    // Ordern lyckades ~ visa bekräftelsen direkt
     btn.textContent = "Betala med Swish";
     btn.disabled = false;
     msg.textContent = "Order sparad! Slutför betalningen i Swish.";
@@ -520,30 +522,15 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
 
     const qrBox = document.getElementById("swish-qr-box");
     qrBox.style.display = "block";
-    document.getElementById("swish-qr-amount").textContent = `Belopp: ${total} kr`;
-
-    try {
-      if (typeof QRCode === "undefined") throw new Error("QR-biblioteket laddades inte");
-      QRCode.toCanvas(document.getElementById("swish-qr-canvas"), swishUrl, { width: 220, margin: 1 }, (err) => {
-        if (err) showSwishLinkFallback(swishUrl);
-      });
-    } catch (qrErr) {
-      console.error(qrErr);
-      showSwishLinkFallback(swishUrl);
-    }
-
-    function showSwishLinkFallback(url) {
-      document.getElementById("swish-qr-canvas").style.display = "none";
-      const fallback = document.createElement("p");
-      fallback.innerHTML = `QR-koden kunde inte visas. <a href="${url}">Klicka här för att öppna Swish</a> på mobilen, eller swisha manuellt till vårt nummer.`;
-      document.getElementById("swish-qr-canvas").insertAdjacentElement("afterend", fallback);
-    }
+    document.getElementById("swish-qr-number").textContent = SWISH_NUMBER;
+    document.getElementById("swish-qr-amount").textContent = `Belopp att swisha: ${total} kr`;
 
     // På mobil kan vi dessutom försöka öppna appen direkt
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (isMobile) {
       window.location.href = swishUrl;
     }
+
   });
 </script>
 
