@@ -241,9 +241,18 @@ section.alt .section-head p{color:#DDEFE5;}
 .notice.warn{border-color:#BFE0CE; background:#EFF8F3; color:var(--green-dark);}
 .notice.err{border-color:#E1B3A5; background:#FBEAE4; color:#7A311D;}
 
-/* Footer */
-footer.site{padding:40px 0; border-top:1px solid var(--line); color:var(--ink-soft); font-size:0.9rem;}
+/* Footer — hela panelen grön, inga synliga linjer mellan raderna */
+footer.site{
+  padding:40px 0;
+  background:var(--green);
+  color:#fff;
+  font-size:0.9rem;
+}
 footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;}
+footer.site .muted{color:#DDEFE5;}
+footer.site a{color:#fff; text-decoration:underline;}
+footer.site a:hover{text-decoration:none;}
+footer.site p{color:#DDEFE5; margin:0; max-width:none;}
 
 /* Utility */
 .center{text-align:center;}
