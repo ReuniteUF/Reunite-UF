@@ -287,7 +287,7 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
 
       <div class="product-panel">
         <div class="price-tag" id="price-tag">99 kr / st</div>
-        <p class="muted" id="product-desc" style="margin:0;">Nyckelring — vädertålig QR-bricka att hänga.</p>
+        <p class="muted" id="product-desc" style="margin:0;">Nyckelring ~ vädertålig QR-bricka att hänga.</p>
         <div class="qty-row">
           <button type="button" id="qty-minus" aria-label="Minska antal">–</button>
           <span id="qty-value">1</span>
@@ -374,7 +374,7 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
 
   const PRODUCTS = {
     nyckelring: { label: "Nyckelring", price: 99, desc: "Nyckelring — vädertålig QR-bricka att hänga." },
-    klistermarke: { label: "Klistermärke", price: 39, desc: "Klistermärke — samma QR-kod, för saker man inte kan hänga något på." },
+    klistermarke: { label: "Klistermärke", price: 19, desc: "Klistermärke — samma QR-kod, för saker man inte kan hänga något på." },
   };
 
   let selectedProduct = "nyckelring";
@@ -505,32 +505,47 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
       return;
     }
 
-    // Ordern är sparad ~ bygg Swish-länken
+      // Ordern är sparad ~ bygg Swish-länken
+    const cleanMsg = `ReuniteUF ${cartSummaryText()}`
+      .replace(/[^a-zA-ZåäöÅÄÖ0-9 .,\-]/g, "")
+      .slice(0, 50);
+
     const swishData = {
       version: 1,
       payee: { value: SWISH_NUMBER, editable: false },
-      amount: { value: String(total), editable: false },
-      message: { value: `ReuniteUF: ${cartSummaryText()}`.slice(0, 50), editable: false },
+      amount: { value: total, editable: false },
+      message: { value: cleanMsg, editable: false },
     };
     const swishUrl = "swish://payment?data=" + encodeURIComponent(JSON.stringify(swishData));
 
-    // Ordern lyckades ~ visa bekräftelsen direkt
     btn.textContent = "Betala med Swish";
     btn.disabled = false;
-    msg.textContent = "Order sparad! Slutför betalningen i Swish.";
+    msg.textContent = "Order sparad! Öppnar Swish…";
     msg.classList.add("ok");
 
     const qrBox = document.getElementById("swish-qr-box");
     qrBox.style.display = "block";
     document.getElementById("swish-qr-number").textContent = SWISH_NUMBER;
-    document.getElementById("swish-qr-amount").textContent = `Belopp att swisha: ${total} kr`;
+    document.getElementById("swish-qr-amount").textContent =
+      `Belopp att swisha: ${total} kr till ${SWISH_NUMBER}`;
 
-    // På mobil kan vi dessutom försöka öppna appen direkt
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if (isMobile) {
+    // Knapp som kunden kan trycka på om appen inte öppnas av sig själv
+    let openBtn = document.getElementById("swish-open-btn");
+    if (!openBtn) {
+      openBtn = document.createElement("a");
+      openBtn.id = "swish-open-btn";
+      openBtn.className = "btn btn-gold btn-block";
+      openBtn.style.marginBottom = "16px";
+      openBtn.textContent = "Öppna Swish";
+      qrBox.insertBefore(openBtn, qrBox.querySelector("p").nextSibling);
+    }
+    openBtn.href = swishUrl;
+
+    // Försök öppna appen direkt på mobil
+    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
       window.location.href = swishUrl;
     }
-  
+
   });
 </script>
 
