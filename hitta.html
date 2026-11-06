@@ -496,10 +496,8 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
 <script type="module">
   import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-  // --- FYLL I ERA EGNA VÄRDEN HÄR (Supabase -> Project Settings -> API) ---
   const SUPABASE_URL = "https://ssvmvnhxxgfjoapwajzb.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzdm12bmh4eGdmam9hcHdhanpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjc2MDUsImV4cCI6MjEwMzk0MzYwNX0.BzLIWOlPWMJiIAwgsGBPHp53miFamZW8klzKxjonJ9c";
-  // -------------------------------------------------------------------
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -538,7 +536,6 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
       if (!raw) return;
 
       let code = raw;
-      // Om personen klistrat in en hel länk, plocka ut ?id=... ur den
       try {
         const url = new URL(raw);
         const idFromUrl = url.searchParams.get("id");
@@ -559,11 +556,8 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
 
   async function init() {
     show(views.loading);
-    const { data: item, error } = await supabase
-      .from("items")
-      .select("*")
-      .eq("id", itemId)
-      .maybeSingle();
+    const { data, error } = await supabase.rpc("get_item", { p_id: itemId });
+    const item = data && data[0];
 
     if (error || !item) {
       show(views.notFound);
@@ -590,17 +584,12 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
 
       const data = Object.fromEntries(new FormData(form).entries());
 
-      const { data: updated, error } = await supabase
-        .from("items")
-        .update({
-          title: data.title,
-          description: data.description || null,
-          owner_contact: data.owner_contact || null,
-          status: "active",
-        })
-        .eq("id", itemId)
-        .select()
-        .single();
+      const { data: newKey, error } = await supabase.rpc("register_item", {
+        p_id: itemId,
+        p_title: data.title,
+        p_description: data.description || null,
+        p_owner_contact: data.owner_contact || null,
+      });
 
       if (error) {
         console.error(error);
@@ -611,7 +600,7 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
         return;
       }
 
-      const link = `${location.origin}${location.pathname}?id=${itemId}&key=${updated.owner_key}`;
+      const link = `${location.origin}${location.pathname}?id=${itemId}&key=${newKey}`;
       const box = document.getElementById("owner-link-box");
       box.textContent = link;
 
@@ -623,8 +612,13 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
     });
   }
 
-  function openChat(item) {
-    const isOwner = ownerKey && ownerKey === item.owner_key;
+  async function openChat(item) {
+    let isOwner = false;
+    if (ownerKey) {
+      const { data } = await supabase.rpc("check_owner", { p_id: item.id, p_key: ownerKey });
+      isOwner = data === true;
+    }
+
     document.getElementById("item-title").textContent = item.title || "Chatt";
     document.getElementById("item-desc").textContent = item.description || "";
     const badge = document.getElementById("role-badge");
@@ -635,28 +629,23 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
 
     const myRole = isOwner ? "agare" : "hittare";
     const log = document.getElementById("chat-log");
+    let lastCount = null;
 
     async function loadMessages() {
-      // Radera meddelanden äldre än 7 dagar — chatten stängs aldrig, bara historiken glöms bort
-      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-      await supabase
-        .from("messages")
-        .delete()
-        .eq("item_id", item.id)
-        .lt("created_at", sevenDaysAgo);
+      const { data: messages, error } = await supabase.rpc("get_messages", { p_item_id: item.id });
+      if (error) { console.error(error); return; }
 
-      const { data: messages, error } = await supabase
-        .from("messages")
-        .select("*")
-        .eq("item_id", item.id)
-        .gte("created_at", sevenDaysAgo)
-        .order("created_at", { ascending: true });
-
-      if (error) {
-        console.error(error);
-        return;
+      if (lastCount !== null && messages.length > lastCount) {
+        const newest = messages[messages.length - 1];
+        if (newest.sender !== myRole && "Notification" in window && Notification.permission === "granted") {
+          new Notification("Nytt meddelande om din bricka", {
+            body: newest.content,
+            tag: `reuniteuf-${item.id}`,
+          });
+        }
       }
-      renderMessages(messages);
+      if (messages.length !== lastCount) renderMessages(messages);
+      lastCount = messages.length;
     }
 
     function renderMessages(messages) {
@@ -681,31 +670,8 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
       return div.innerHTML;
     }
 
-    loadMessages();
-    setupNotifications();
-
-    // Realtid: lyssna på nya meddelanden för det här föremålet
-    supabase
-      .channel(`messages-${item.id}`)
-      .on("postgres_changes", {
-        event: "INSERT",
-        schema: "public",
-        table: "messages",
-        filter: `item_id=eq.${item.id}`,
-      }, (payload) => {
-        loadMessages();
-        const newMsg = payload.new;
-        if (newMsg && newMsg.sender !== myRole && "Notification" in window && Notification.permission === "granted") {
-          new Notification("Nytt meddelande om din bricka", {
-            body: newMsg.content,
-            tag: `reuniteuf-${item.id}`,
-          });
-        }
-      })
-      .subscribe();
-
     function setupNotifications() {
-      if (!("Notification" in window)) return; // webbläsaren stödjer inte notiser
+      if (!("Notification" in window)) return;
       const notifBtn = document.getElementById("notif-btn");
 
       function updateButtonLabel() {
@@ -713,7 +679,7 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
           notifBtn.textContent = "🔔 Notiser på";
           notifBtn.disabled = true;
         } else if (Notification.permission === "denied") {
-          notifBtn.style.display = "none"; // blockerat i webbläsaren, inget vi kan göra
+          notifBtn.style.display = "none";
         } else {
           notifBtn.textContent = "🔔 Aktivera notiser";
           notifBtn.style.display = "inline-flex";
@@ -727,6 +693,10 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
       });
     }
 
+    loadMessages();
+    setupNotifications();
+    setInterval(() => { if (!document.hidden) loadMessages(); }, 5000);
+
     const chatForm = document.getElementById("chat-form");
     const chatText = document.getElementById("chat-text");
     chatForm.addEventListener("submit", async (e) => {
@@ -734,12 +704,13 @@ footer.site p{color:#DDEFE5; margin:0; max-width:none;}
       const content = chatText.value.trim();
       if (!content) return;
       chatText.value = "";
-      const { error } = await supabase.from("messages").insert({
-        item_id: item.id,
-        sender: myRole,
-        content,
+      const { error } = await supabase.rpc("send_message", {
+        p_item_id: item.id,
+        p_content: content,
+        p_key: ownerKey || null,
       });
       if (error) console.error(error);
+      loadMessages();
     });
   }
 </script>
